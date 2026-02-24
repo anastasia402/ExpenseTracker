@@ -2,17 +2,19 @@ package com.interview.demo.model;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
 @Data
-@DiscriminatorValue("EXPENSE")
-public class Expense extends Transaction {
+@DiscriminatorValue("INCOME")
+public class Income extends Transaction {
 
-    private String location;
+    private boolean isRecurring;
 
     @Override
     public Double getSignedAmount() {
-        return -getAmount();
+        return getAmount();
     }
+
 }
