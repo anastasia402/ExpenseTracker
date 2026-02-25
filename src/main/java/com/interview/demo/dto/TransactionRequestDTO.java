@@ -1,21 +1,19 @@
 package com.interview.demo.dto;
 
 import lombok.Data;
+
 import java.time.LocalDate;
 
 @Data
-public class TransactionResponseDTO {
-    private Long id;
+public class TransactionRequestDTO {
     private String description;
     private Double amount;
     private String currency;
-    private Double signedAmount;
     private LocalDate date;
     private String type;
     private String paymentMethod;
     private String categoryName;
-    private String categoryColor;
 
-    private String location;
     private boolean recurring;
+    private String location;
 }

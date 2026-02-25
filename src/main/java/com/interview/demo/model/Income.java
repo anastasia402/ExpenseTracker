@@ -2,7 +2,6 @@ package com.interview.demo.model;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity

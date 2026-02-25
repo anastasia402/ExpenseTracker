@@ -1,6 +1,5 @@
 package com.interview.demo.repository;
 
-import com.interview.demo.enums.PaymentMethod;
 import com.interview.demo.model.Transaction;
 import org.springframework.data.repository.CrudRepository;
 
@@ -12,11 +11,5 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 
     List<Transaction> findByCategoryAndDate(String category, LocalDate date);
 
-    List<Transaction> findTransactionByAmountEquals(Double amount);
-
-    List<Transaction> findTransactionByAmountGreaterThan(Double amount);
-
-    List<Transaction> findTransactionByAmountLessThan(Double amount);
-
-    List<Transaction> findTransactionByPaymentMethodEquals(PaymentMethod paymentMethod);
+    List<Transaction> findByDateBetween(LocalDate start, LocalDate end);
 }

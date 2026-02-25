@@ -20,6 +20,4 @@ public class Category {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
     private CategoryName name;
-
-    private String color;
 }

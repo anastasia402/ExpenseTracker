@@ -1,5 +1,7 @@
 package com.interview.demo.controller;
 
+import com.interview.demo.dto.TransactionRequestDTO;
+import com.interview.demo.dto.TransactionResponseDTO;
 import com.interview.demo.model.Transaction;
 import com.interview.demo.service.TransactionService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -22,61 +25,89 @@ public class TransactionController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Transaction>> getAll() {
+    public ResponseEntity<List<TransactionResponseDTO>> getAll() {
         List<Transaction> transactions = transactionService.findAll();
+
         if (transactions.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return ResponseEntity.ok(transactions);
+        List<TransactionResponseDTO> dtos = transactions.stream()
+                .map(transactionService::convertToResponseDTO)
+                .toList();
+
+        return ResponseEntity.ok(dtos);
     }
 
-    @PutMapping("/edit")
-    public ResponseEntity<?> update(@RequestBody Transaction transaction) {
-        if (transaction.getId() == null) {
-            return ResponseEntity.badRequest().body("No id found");
-        }
+    @GetMapping("/filter")
+    public ResponseEntity<List<TransactionResponseDTO>> getByMonth(
+            @RequestParam int year,
+            @RequestParam int month) {
 
-        Transaction existing = transactionService.findById(transaction.getId());
-        if (existing == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No transaction found");
-        }
+        List<Transaction> transactions = transactionService.findByMonthAndYear(year, month);
 
-        return ResponseEntity.ok(transactionService.update(transaction));
+        List<TransactionResponseDTO> response = transactions.stream()
+                .map(transactionService::convertToResponseDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/delete")
-    public ResponseEntity<Void> delete(@RequestBody Transaction transaction) {
-        if (transaction.getId() == null || transactionService.findById(transaction.getId()) == null) {
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<TransactionResponseDTO> update(@PathVariable Long id, @RequestBody TransactionRequestDTO requestDTO) {
+        Transaction updated = transactionService.update(id, requestDTO);
+        return ResponseEntity.ok(transactionService.convertToResponseDTO(updated));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (transactionService.findById(id) == null) {
             return ResponseEntity.notFound().build();
         }
-        transactionService.deleteById(transaction.getId());
+        transactionService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/category")
-    public ResponseEntity<List<Transaction>> getByCategory(@RequestParam String name) {
+    public ResponseEntity<List<TransactionResponseDTO>> getByCategory(@RequestParam String name) {
         List<Transaction> results = transactionService.findByCategory(name);
-        if (results.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(results);
+
+        List<TransactionResponseDTO> dtos = results.stream()
+                .map(transactionService::convertToResponseDTO)
+                .toList();
+
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Transaction>> getByCategoryAndDate(
-            @RequestParam String category,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public ResponseEntity<List<TransactionResponseDTO>> getByCategoryAndDate(@RequestParam String category,
+                                                                             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
         List<Transaction> results = transactionService.findByCategoryAndDate(category, date);
-        return ResponseEntity.ok(results);
+
+        List<TransactionResponseDTO> dtos = results.stream()
+                .map(transactionService::convertToResponseDTO)
+                .toList();
+
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/details")
-    public ResponseEntity<Transaction> getById(@RequestParam Long id) {
+    public ResponseEntity<TransactionResponseDTO> getById(@RequestParam Long id) {
         Transaction transaction = transactionService.findById(id);
+
         if (transaction == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(transaction);
+
+        return ResponseEntity.ok(transactionService.convertToResponseDTO(transaction));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<TransactionResponseDTO> create(@RequestBody TransactionRequestDTO requestDTO) {
+        Transaction savedTransaction = transactionService.save(requestDTO);
+        return new ResponseEntity<>(
+                transactionService.convertToResponseDTO(savedTransaction),
+                HttpStatus.CREATED
+        );
     }
 }

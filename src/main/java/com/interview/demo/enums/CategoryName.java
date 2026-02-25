@@ -9,5 +9,7 @@ public enum CategoryName {
     HEALTH,
     RENT,
     SALARY,
+    BONUS,
+    SERVICES,
     OTHER
 }
