@@ -46,12 +46,14 @@ public class TransactionService {
 
             transaction.setCurrency(Currency.valueOf(dto.getCurrency().toUpperCase()));
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid currency: '" + dto.getCurrency() + "'. Supported currencies are: RON, EUR, USD, GBP.");
+            throw new IllegalArgumentException("Invalid currency: '" + dto.getCurrency() + "'. Supported currencies are: RON.");
         }
 
         transaction.setDescription(dto.getDescription());
         transaction.setAmount(dto.getAmount());
         transaction.setDate(dto.getDate());
+        transaction.setPaymentMethod(PaymentMethod.valueOf(dto.getPaymentMethod()));
+        transaction.setRecurring(dto.isRecurring());
         try {
             transaction.setPaymentMethod(PaymentMethod.valueOf(dto.getPaymentMethod().toUpperCase()));
         } catch (IllegalArgumentException | NullPointerException e) {
@@ -90,6 +92,7 @@ public class TransactionService {
         existing.setDescription(dto.getDescription());
         existing.setAmount(dto.getAmount());
         existing.setDate(dto.getDate());
+        existing.setRecurring(dto.isRecurring());
 
         try {
             if (dto.getCurrency() != null) {
@@ -141,6 +144,9 @@ public class TransactionService {
         dto.setDescription(transaction.getDescription());
         dto.setAmount(transaction.getAmount());
         dto.setDate(transaction.getDate());
+        dto.setCurrency(String.valueOf(transaction.getCurrency()));
+        dto.setPaymentMethod(String.valueOf(transaction.getPaymentMethod()));
+        dto.setRecurring(transaction.isRecurring());
 
         dto.setSignedAmount(transaction.getSignedAmount());
 

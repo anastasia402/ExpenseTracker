@@ -20,7 +20,7 @@ const TransactionModal = ({ transaction, isOpen, onClose }) => {
             <div>
               <p className="text-xs text-gray-400 uppercase font-bold">Amount</p>
               <p className={`text-xl font-bold ${transaction.type === 'INCOME' ? 'text-green-600' : 'text-red-600'}`}>
-                {transaction.signedAmount} RON
+                {transaction.signedAmount} {transaction.currency}
               </p>
             </div>
             <div>

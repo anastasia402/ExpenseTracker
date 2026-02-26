@@ -44,4 +44,7 @@ public abstract class Transaction {
     private Currency currency;
 
     public abstract Double getSignedAmount();
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean recurring;
 }

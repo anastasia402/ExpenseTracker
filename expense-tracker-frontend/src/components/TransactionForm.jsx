@@ -34,10 +34,10 @@ const handleSubmit = async (e) => {
     try {
       if (formData.id) {
         await updateTransaction(formData.id, formData);
-        alert("Tranzacție actualizată!");
+        alert("Updated");
       } else {
         await createTransaction(formData);
-        alert("Tranzacție adăugată!");
+        alert("Created");
       }
 
       setFormData(initialState); 
@@ -45,8 +45,8 @@ const handleSubmit = async (e) => {
       if (onTransactionAdded) onTransactionAdded(); 
       
     } catch (error) {
-       console.error("Eroare la salvare:", error);
-       alert("A apărut o eroare. Verifică consola!");
+       console.error("An error occured while saving changes", error);
+       alert("An error occured");
     }
 };
 
